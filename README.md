@@ -1,2 +1,519 @@
-# Caf-Natu
-Bienvenido a la experiencia del café natural
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Café & Naturaleza</title>
+  <style>
+    /* Fuentes */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    :root {
+      --brown-light: #d7c4a3;
+      --brown-dark: #4a342e;
+      --beige: #f4eee1;
+      --green-light: #a3b18a;
+      --green-dark: #52634a;
+      --text-dark: #3b2f2f;
+      --shadow: rgba(0,0,0,0.1);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--beige);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--brown-light), var(--green-light));
+      padding: 1.5rem 2rem;
+      color: var(--brown-dark);
+      font-weight: 700;
+      font-size: 1.8rem;
+      text-align: center;
+      box-shadow: 0 4px 8px var(--shadow);
+      user-select: none;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin: 1rem 0;
+    }
+
+    nav button {
+      background: none;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--green-dark);
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background-color: var(--green-light);
+      color: var(--brown-dark);
+      box-shadow: 0 3px 6px var(--shadow);
+    }
+
+    main {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+
+    /* Secciones ocultas */
+    section {
+      display: none;
+      animation: fadeIn 0.6s ease forwards;
+    }
+    section.active {
+      display: block;
+    }
+
+    /* Fade in */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    /* Home */
+    #home {
+      text-align: center;
+    }
+    #home img {
+      max-width: 90vw;
+      max-height: 300px;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 15px var(--shadow);
+      margin-bottom: 1.5rem;
+      object-fit: cover;
+    }
+    #home h2 {
+      font-weight: 700;
+      color: var(--brown-dark);
+      margin-bottom: 0.5rem;
+    }
+    #home p {
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: var(--green-dark);
+      line-height: 1.5;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Recetas - grid de tarjetas */
+    #recetas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 12px var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px var(--shadow);
+    }
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-title {
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      color: var(--brown-dark);
+      font-size: 1.1rem;
+    }
+    .card-desc {
+      flex-grow: 1;
+      font-size: 0.9rem;
+      color: var(--green-dark);
+    }
+
+    /* Modal receta */
+    #modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+    #modal.active {
+      display: flex;
+      animation: fadeIn 0.3s ease forwards;
+    }
+    #modal-content {
+      background: var(--beige);
+      border-radius: var(--radius);
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 20px var(--shadow);
+      padding: 1.5rem 2rem;
+      position: relative;
+    }
+    #modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: var(--brown-dark);
+      cursor: pointer;
+      font-weight: 700;
+      line-height: 1;
+    }
+    #modal img {
+      width: 100%;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      object-fit: cover;
+    }
+    #modal h3 {
+      margin-top: 0;
+      color: var(--brown-dark);
+    }
+    #modal p {
+      color: var(--green-dark);
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+    #modal ul {
+      color: var(--green-dark);
+      margin-left: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    #modal ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    /* Naturaleza y Tips */
+    #naturaleza, #tips {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 12px var(--shadow);
+      padding: 1.5rem 2rem;
+      line-height: 1.6;
+      color: var(--green-dark);
+    }
+    #naturaleza img, #tips img {
+      width: 100%;
+      border-radius: var(--radius);
+      margin: 1rem 0;
+      object-fit: cover;
+      max-height: 280px;
+    }
+    #naturaleza h2, #tips h2 {
+      color: var(--brown-dark);
+      margin-top: 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      font-size: 0.9rem;
+      color: var(--green-dark);
+      background: var(--beige);
+      box-shadow: inset 0 1px 4px var(--shadow);
+    }
+
+    /* Scrollbar modal */
+    #modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    #modal-content::-webkit-scrollbar-thumb {
+      background-color: var(--green-light);
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>Café & Naturaleza</header>
+  <nav>
+    <button class="active" data-target="home">Inicio</button>
+    <button data-target="recetas">Recetas</button>
+    <button data-target="naturaleza">Naturaleza</button>
+    <button data-target="tips">Tips</button>
+  </nav>
+  <main>
+    <section id="home" class="active">
+      <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80" alt="Café en naturaleza" />
+      <h2>Bienvenido a la experiencia del café natural</h2>
+      <p>
+        Descubrí los mejores cafés del mundo, sus recetas precisas y la maravillosa conexión con la naturaleza que los hace únicos.  
+        Explorá, aprendé y disfrutá cada sorbo con conciencia y amor por el planeta.
+      </p>
+    </section>
+
+    <section id="recetas">
+      <!-- Tarjetas de café generadas por JS -->
+    </section>
+
+    <section id="naturaleza">
+      <h2>El origen del café y su conexión con la naturaleza</h2>
+      <p>
+        El café proviene de regiones tropicales donde su cultivo es un arte y una tradición que cuida el medio ambiente.  
+        Plantaciones cuidadas, sombra natural, y prácticas sostenibles son clave para mantener su sabor y preservar la biodiversidad.  
+      </p>
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Cultivo de café" />
+      <p>
+        Apoyar el café de origen responsable ayuda a comunidades campesinas y reduce el impacto ambiental, fomentando un planeta más saludable.
+      </p>
+      <img src="https://images.unsplash.com/photo-1468071174046-657d9d351a40?auto=format&fit=crop&w=800&q=80" alt="Planta de café" />
+    </section>
+
+    <section id="tips">
+      <h2>Consejos para disfrutar el café y conectar con la naturaleza</h2>
+      <ul>
+        <li>Usá molinillos manuales para un aroma más intenso y menos consumo energético.</li>
+        <li>Prepará café filtrado con tela o métodos reutilizables, evitando filtros desechables.</li>
+        <li>Disfrutá tu café en un espacio verde o natural para conectar mente y cuerpo.</li>
+        <li>Preferí cafés orgánicos o de comercio justo para apoyar la sostenibilidad.</li>
+        <li>Usá recipientes reutilizables y evita el plástico.</li>
+      </ul>
+      <img src="https://images.unsplash.com/photo-1528807412822-94ce78f0a234?auto=format&fit=crop&w=800&q=80" alt="Taza de café en la naturaleza" />
+    </section>
+  </main>
+
+  <div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="modal-content">
+      <button id="modal-close" aria-label="Cerrar modal">&times;</button>
+      <!-- Contenido generado con JS -->
+    </div>
+  </div>
+
+  <footer>© 2025 Café & Naturaleza - Creado con ☕ y amor 🌿</footer>
+
+  <script>
+    const navButtons = document.querySelectorAll('nav button');
+    const sections = document.querySelectorAll('main section');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+    const modalCloseBtn = document.getElementById('modal-close');
+    const recetasSection = document.getElementById('recetas');
+
+    // Datos de cafés con imagen, descripción y receta
+    const cafes = [
+      {
+        nombre: 'Espresso',
+        imagen: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Un café intenso y concentrado, base para muchas bebidas.',
+        receta: {
+          ingredientes: ['18-20 g de café molido fino', '30 ml de agua', 'Máquina espresso'],
+          cantidad: '1 taza (30 ml)',
+          instrucciones: 'Compactar café molido fino en el portafiltro y extraer 30 ml en 25-30 segundos con la máquina espresso.'
+        }
+      },
+      {
+        nombre: 'Cappuccino',
+        imagen: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Café espresso con leche vaporizada y espuma cremosa.',
+        receta: {
+          ingredientes: ['30 ml de espresso', '120 ml de leche vaporizada', 'Espuma de leche'],
+          cantidad: '1 taza (150 ml)',
+          instrucciones: 'Preparar un espresso, añadir leche vaporizada y espuma encima. Servir caliente.'
+        }
+      },
+      {
+        nombre: 'Latte',
+        imagen: 'https://images.unsplash.com/photo-1510626176961-4bfb42f5d9bb?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Suave café con mucha leche y una capa ligera de espuma.',
+        receta: {
+          ingredientes: ['30 ml de espresso', '200 ml de leche vaporizada', 'Espuma ligera'],
+          cantidad: '1 taza (230 ml)',
+          instrucciones: 'Preparar espresso y añadir leche vaporizada. Decorar con espuma ligera.'
+        }
+      },
+      {
+        nombre: 'Cold Brew',
+        imagen: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Café infusionado en frío durante horas, suave y refrescante.',
+        receta: {
+          ingredientes: ['100 g de café molido grueso', '1 L de agua fría'],
+          cantidad: '1 litro',
+          instrucciones: 'Mezclar café molido con agua fría, dejar infusionar 12-18 horas en frío y filtrar.'
+        }
+      },
+      {
+        nombre: 'Café Turco',
+        imagen: 'https://images.unsplash.com/photo-1520275933643-0c23e740a96b?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Café muy fino y fuerte, tradicional del Medio Oriente.',
+        receta: {
+          ingredientes: ['7 g de café molido extra fino', '100 ml de agua', 'Azúcar al gusto'],
+          cantidad: '1 taza (100 ml)',
+          instrucciones: 'Mezclar ingredientes en cezve, calentar hasta espuma, retirar y servir sin colar.'
+        }
+      },
+      {
+        nombre: 'Flat White',
+        imagen: 'https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=800&q=80',
+        descripcion: 'Café espresso con leche vaporizada, menos espuma que el cappuccino.',
+        receta: {
+          ingredientes: ['30 ml de espresso', '150 ml de leche vaporizada'],
+          cantidad: '1 taza (180 ml)',
+          instrucciones: 'Preparar espresso y añadir leche vaporizada con poca espuma.'
+        }
+      }
+    ];
+
+    // Función para cambiar sección
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.target;
+        sections.forEach(s => {
+          s.classList.toggle('active', s.id === target);
+        });
+        if(target === 'recetas') {
+          renderRecetas();
+        }
+      });
+    });
+
+    // Renderizar tarjetas de recetas
+    function renderRecetas() {
+      recetasSection.innerHTML = '';
+      cafes.forEach((cafe, i) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Ver receta de ${cafe.nombre}`);
+        card.innerHTML = `
+          <img src="${cafe.imagen}" alt="Imagen de ${cafe.nombre}" />
+          <div class="card-content">
+            <h3 class="card-title">${cafe.nombre}</h3>
+            <p class="card-desc">${cafe.descripcion}</p>
+          </div>
+        `;
+        card.addEventListener('click', () => openModal(i));
+        card.addEventListener('keypress', e => { if(e.key === 'Enter') openModal(i); });
+        recetasSection.appendChild(card);
+      });
+    }
+
+    // Abrir modal con receta
+    function openModal(index) {
+      const cafe = cafes[index];
+      modalContent.querySelector('h3')?.remove();
+      modalContent.querySelector('img')?.remove();
+      modalContent.querySelector('p')?.remove();
+      modalContent.querySelector('ul')?.remove();
+      modalContent.querySelector('#modal-cantidad')?.remove();
+
+      const title = document.createElement('h3');
+      title.id = 'modal-title';
+      title.textContent = cafe.nombre;
+      const img = document.createElement('img');
+      img.src = cafe.imagen;
+      img.alt = `Imagen de ${cafe.nombre}`;
+      const desc = document.createElement('p');
+      desc.textContent = cafe.descripcion;
+      const cantidad = document.createElement('p');
+      cantidad.id = 'modal-cantidad';
+      cantidad.innerHTML = `<strong>Cantidad:</strong> ${cafe.receta.cantidad}`;
+      const ing = document.createElement('ul');
+      cafe.receta.ingredientes.forEach(i => {
+        const li = document.createElement('li');
+        li.textContent = i;
+        ing.appendChild(li);
+      });
+      const instrucciones = document.createElement('p');
+      instrucciones.innerHTML = `<strong>Instrucciones:</strong> ${cafe.receta.instrucciones}`;
+
+      modalContent.appendChild(title);
+      modalContent.appendChild(img);
+      modalContent.appendChild(desc);
+      modalContent.appendChild(cantidad);
+      modalContent.appendChild(ing);
+      modalContent.appendChild(instrucciones);
+
+      modal.classList.add('active');
+      modalCloseBtn.focus();
+    }
+
+    // Cerrar modal
+    modalCloseBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+    // Cerrar modal con click fuera
+    modal.addEventListener('click', e => {
+      if(e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+    // Cerrar modal con Escape
+    window.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && modal.classList.contains('active')) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Inicial render Home
+    // Abrir el modal con los datos del café
+    function openModal(index) {
+      const cafe = cafes[index];
+      modalContent.innerHTML = `
+        <button id="modal-close" aria-label="Cerrar modal">&times;</button>
+        <img src="${cafe.imagen}" alt="${cafe.nombre}" />
+        <h3 id="modal-title">${cafe.nombre}</h3>
+        <p>${cafe.descripcion}</p>
+        <h4>Ingredientes:</h4>
+        <ul>${cafe.receta.ingredientes.map(i => `<li>${i}</li>`).join('')}</ul>
+        <h4>Preparación:</h4>
+        <p>${cafe.receta.instrucciones}</p>
+        <p><strong>Cantidad:</strong> ${cafe.receta.cantidad}</p>
+      `;
+      modal.classList.add('active');
+
+      // Reasignar botón de cierre cada vez que se abre
+      document.getElementById('modal-close').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+    }
+
+    // Cerrar modal si se hace clic fuera del contenido
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
+
