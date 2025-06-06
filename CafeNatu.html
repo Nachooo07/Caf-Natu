@@ -486,8 +486,32 @@
       }
     });
 
-    // Inicial render Home
-    renderRecetas();
+    // Abrir el modal con los datos del café
+    function openModal(index) {
+      const cafe = cafes[index];
+      modalContent.innerHTML = `
+        <button id="modal-close" aria-label="Cerrar modal">&times;</button>
+        <img src="${cafe.imagen}" alt="${cafe.nombre}" />
+        <h3 id="modal-title">${cafe.nombre}</h3>
+        <p>${cafe.descripcion}</p>
+        <h4>Ingredientes:</h4>
+        <ul>${cafe.receta.ingredientes.map(i => `<li>${i}</li>`).join('')}</ul>
+        <h4>Preparación:</h4>
+        <p>${cafe.receta.instrucciones}</p>
+        <p><strong>Cantidad:</strong> ${cafe.receta.cantidad}</p>
+      `;
+      modal.classList.add('active');
+
+      // Reasignar botón de cierre cada vez que se abre
+      document.getElementById('modal-close').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+    }
+
+    // Cerrar modal si se hace clic fuera del contenido
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
   </script>
 </body>
 </html>
